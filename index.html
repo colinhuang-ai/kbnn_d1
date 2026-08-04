@@ -3,16 +3,4 @@
 <button id="greet-btn">Say hello</button>
 <p id="greeting"></p>
 
-<script>
-  document.getElementById('greet-btn').addEventListener('click', async () => {
-    const out = document.getElementById('greeting');
-    try {
-      const res = await fetch('api/user.json');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const user = await res.json();
-      out.textContent = 'Hello ' + user.name + '!';
-    } catch (err) {
-      out.textContent = 'Error: ' + err.message;
-    }
-  });
-</script>
+<script type="module" src="./app.js"></script>

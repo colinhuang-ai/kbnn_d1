@@ -1,0 +1,52 @@
+name: Submit Code
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit tests with mocks
+        run: node --test tests/greeting.test.mjs
+
+      - name: Security scan with Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: auto
+
+      - name: Code quality with HTMLHint
+        run: npx -y htmlhint index.html
+
+      - name: Install Chrome for Lighthouse
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Start static site
+        run: |
+          python3 -m http.server 8080 > /tmp/site.log 2>&1 &
+          for i in $(seq 1 15); do
+            curl -fsS http://127.0.0.1:8080/index.html >/dev/null && break
+            sleep 1
+          done
+
+      - name: Performance scan with Lighthouse
+        run: |
+          npx -y lighthouse http://127.0.0.1:8080/index.html \
+            --chrome-flags="--headless --no-sandbox" \
+            --output=html \
+            --output=json \
+            --output-path=./lighthouse-report \
+            --quiet
