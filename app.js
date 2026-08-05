@@ -3,7 +3,7 @@ export function buildGreetingMessage(user) {
     throw new Error('Missing user name');
   }
 
-  return `Hello ${user.name}!`;
+  return `Hello ${user.name} ^^`;
 }
 
 export async function renderGreeting(fetchImpl, outputElement) {

@@ -4,7 +4,7 @@ import test from 'node:test';
 import { buildGreetingMessage, renderGreeting } from '../app.js';
 
 test('buildGreetingMessage formats the expected greeting', () => {
-  assert.equal(buildGreetingMessage({ name: 'mai' }), 'Hello mai!');
+  assert.equal(buildGreetingMessage({ name: 'mai' }), 'Hello mai ^^');
 });
 
 test('buildGreetingMessage rejects a missing name', () => {
@@ -28,7 +28,7 @@ test('renderGreeting uses a mocked fetch response', async () => {
   await renderGreeting(fetchMock, outputElement);
 
   assert.deepEqual(calls, ['api/user.json']);
-  assert.equal(outputElement.textContent, 'Hello maria!');
+  assert.equal(outputElement.textContent, 'Hello maria ^^');
 });
 
 test('renderGreeting surfaces non-OK responses', async () => {
