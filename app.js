@@ -1,9 +1,28 @@
+// Bỏ luôn cả nội dung bên trong <script>/<style>, kể cả khi thẻ không được đóng.
+const RAW_TEXT_ELEMENT = /<(script|style)\b[^>]*>[\s\S]*?(?:<\/\1\s*>|$)/gi;
+const HTML_TAG = /<[^>]*>/g;
+
+export function stripTags(value) {
+  return value
+    .replace(RAW_TEXT_ELEMENT, ' ')
+    .replace(HTML_TAG, ' ')
+    .replace(/[<>]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function buildGreetingMessage(user) {
-  if (!user || typeof user.name !== 'string' || user.name.trim() === '') {
+  if (!user || typeof user.name !== 'string') {
     throw new Error('Missing user name');
   }
 
-  return `Hello ${user.name} ((:`;
+  const name = stripTags(user.name);
+
+  if (name === '') {
+    throw new Error('Missing user name');
+  }
+
+  return `Hello ${name} ((:`;
 }
 
 export async function renderGreeting(fetchImpl, outputElement) {
