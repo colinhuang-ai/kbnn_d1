@@ -1,7 +1,29 @@
 <!doctype html>
 <html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome docker</title>
+<style>
+  .wave {
+    display: inline-block;
+    font-size: 1.4em;
+    transform-origin: 70% 70%;
+    animation: wave 2.2s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(14deg); }
+    20%, 40% { transform: rotate(-10deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wave { animation: none; }
+  }
+</style>
+</head>
 <body>
-<h2>Welcome docker</h2>
+<h2><span class="wave" role="img" aria-label="waving hand">&#128075;</span> Welcome docker</h2>
 
 <button id="greet-btn">Say hello</button>
 <p id="greeting"></p>
