@@ -4,7 +4,7 @@ import test from 'node:test';
 import { buildGreetingMessage, renderGreeting } from '../app.js';
 
 test('buildGreetingMessage formats the expected greeting', () => {
-  assert.equal(buildGreetingMessage({ name: 'mai' }), 'Hello mai!');
+  assert.equal(buildGreetingMessage({ name: 'mai' }), 'Hello mai ^^');
 });
 
 test('buildGreetingMessage rejects a missing name', () => {
