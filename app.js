@@ -22,7 +22,7 @@ export function buildGreetingMessage(user) {
     throw new Error('Missing user name');
   }
 
-  return `Hello ${name} ((:`;
+  return `Hello ${name} ^^`;
 }
 
 export async function renderGreeting(fetchImpl, outputElement) {
@@ -55,6 +55,10 @@ export function attachGreeting(documentRef = globalThis.document, fetchImpl = gl
   });
 }
 
-if (typeof document !== 'undefined' && typeof fetch !== 'undefined') {
-  attachGreeting();
+export function initAutoAttach() {
+  if (typeof document !== 'undefined' && typeof fetch !== 'undefined') {
+    attachGreeting();
+  }
 }
+
+initAutoAttach();
