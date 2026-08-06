@@ -12,6 +12,11 @@
 pipeline {
   agent { label 'linux' }
 
+  triggers {
+    // Kiểm tra Git mỗi 1 phút, chỉ kích hoạt build khi phát hiện commit mới
+    pollSCM('* * * * *')
+  }
+
   options {
     timestamps()
     timeout(time: 30, unit: 'MINUTES')
