@@ -37,6 +37,7 @@
 - Test report JUnit trong tab **Tests** (`test-results.xml`).
 - Artifacts: `semgrep.sarif`, `lighthouse-report.html`, `lighthouse-report.json`.
 - Trên `main`/`master`: push `hoangpt/kbnn:latest` và `hoangpt/kbnn:sha-<short-sha>`.
+- **Deploy**: Kéo Docker image mới nhất về và chạy trên localhost tại cổng 82 (`http://localhost:82`).
 
 ## Chạy thử nhanh
 

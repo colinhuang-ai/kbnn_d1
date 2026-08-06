@@ -1,6 +1,7 @@
-// CI tương đương .github/workflows/submit-code.yml
+// CI/CD cho Jenkins Pipeline
 // verify:  unit test -> semgrep -> htmlhint -> lighthouse
 // publish: build + push Docker image (chỉ khi push vào main/master, bỏ qua pull request)
+// deploy:  kéo Docker image về và chạy tại cổng 82 trên server localhost
 //
 // Yêu cầu trên Jenkins agent (label 'linux'):
 //   - Docker CLI + quyền dùng /var/run/docker.sock (mỗi stage verify chạy trong 1 container)
@@ -211,6 +212,53 @@ pipeline {
         }
         success {
           echo "Đã push: ${env.IMAGE_TAGS}"
+        }
+      }
+    }
+
+    stage('Deploy to Localhost') {
+      when {
+        beforeAgent true
+        allOf {
+          not { changeRequest() }                                     // bỏ qua pull request
+          expression { env.GIT_REF in ['main', 'master'] }             // chỉ deploy trên main/master
+        }
+      }
+      environment {
+        CONTAINER_NAME = 'kbnn-app'
+        HOST_PORT      = '82'
+        CONTAINER_PORT = '80'
+      }
+      steps {
+        sh '''
+          set -eu
+
+          echo "=== Kéo image Docker mới nhất từ Docker Hub ==="
+          docker pull "${IMAGE_NAME}:latest"
+
+          echo "=== Gỡ bỏ container cũ nếu đang chạy ==="
+          docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+
+          echo "=== Chạy container mới tại cổng ${HOST_PORT} ==="
+          docker run -d \
+            --name "${CONTAINER_NAME}" \
+            --restart always \
+            -p "${HOST_PORT}:${CONTAINER_PORT}" \
+            "${IMAGE_NAME}:latest"
+
+          echo "=== Kiểm tra ứng dụng sau khi deploy ==="
+          sleep 2
+          docker ps -f name="${CONTAINER_NAME}"
+          curl -fsS "http://localhost:${HOST_PORT}/" >/dev/null && echo "Deploy thành công tại http://localhost:${HOST_PORT}/"
+        '''
+      }
+      post {
+        success {
+          echo "Đã deploy thành công ứng dụng tại cổng ${HOST_PORT} trên localhost!"
+        }
+        failure {
+          echo "Deploy thất bại! Kiểm tra log container..."
+          sh 'docker logs "${CONTAINER_NAME}" --tail 50 || true'
         }
       }
     }
